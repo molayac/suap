@@ -18,15 +18,15 @@ import { TabsPage } from '../pages/tabs/tabs';
 import { TutorialPage } from '../pages/tutorial/tutorial';
 import { WelcomePage } from '../pages/welcome/welcome';
 
-import { Settings } from '../providers/providers';
+import { Settings, EffectsProvider, MgProductsProvider, MgCustomerProvider } from '../providers/providers';
 
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
   template: `<ion-menu [content]="content">
     <ion-header>
-      <ion-toolbar>
-        <ion-title>Pages</ion-title>
+      <ion-toolbar color="primary">
+        <ion-title>Menu</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -77,11 +77,11 @@ export class MyApp {
   initTranslate() {
     // Set the default language for translation strings, and the current language.
     this.translate.setDefaultLang('en');
-
-    if (this.translate.getBrowserLang() !== undefined) {
-      this.translate.use(this.translate.getBrowserLang());
+    let browserLang = this.translate.getBrowserLang();
+    if (browserLang !== undefined) {
+      this.translate.use(browserLang);
     } else {
-      this.translate.use('en'); // Set your language here
+      this.translate.use('es'); // Set your language here
     }
 
     this.translate.get(['BACK_BUTTON_TEXT']).subscribe(values => {

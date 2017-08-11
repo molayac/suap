@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
 import { NavController, ToastController } from 'ionic-angular';
 
-import { MainPage } from '../../pages/pages';
 
-import { User } from '../../providers/user';
+import { WelcomePage } from '../welcome/welcome';
+import { StorePage } from '../store/store';
+
+import { MgGlobalProvider } from '../../providers/mg-global';
+import { EffectsProvider } from '../../providers/providers';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -25,9 +28,10 @@ export class LoginPage {
   private loginErrorString: string;
 
   constructor(public navCtrl: NavController,
-    public user: User,
+    public mgService: MgGlobalProvider,
     public toastCtrl: ToastController,
-    public translateService: TranslateService) {
+    public translateService: TranslateService,
+    public effects:EffectsProvider) {
 
     this.translateService.get('LOGIN_ERROR').subscribe((value) => {
       this.loginErrorString = value;
@@ -36,10 +40,11 @@ export class LoginPage {
 
   // Attempt to login in through our User service
   doLogin() {
-    this.user.login(this.account).subscribe((resp) => {
-      this.navCtrl.push(MainPage);
-    }, (err) => {
-      this.navCtrl.push(MainPage);
+    this.mgService.login(this.account).then((resp) => {
+      console.log("logged in!");
+      this.navCtrl.push(StorePage);
+    }).catch(err => {
+      // this.navCtrl.push(WelcomePage);
       // Unable to log in
       let toast = this.toastCtrl.create({
         message: this.loginErrorString,
@@ -48,5 +53,9 @@ export class LoginPage {
       });
       toast.present();
     });
+  }
+
+  ionViewDidLeave(){
+    this.effects.effectFlip();
   }
 }

@@ -1,0 +1,53 @@
+<ion-header>
+
+  <ion-navbar color="primary">
+    <button ion-button start menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Categorías</ion-title>
+    <ion-buttons end>
+      <button ion-button ion-item-left color="custom_light" [navPush]="loginPage">
+        <ion-icon name="contact"></ion-icon>
+      </button>
+      <button ion-button item-rigth color="custom_light" [navPush]="cartPage">
+        <ion-icon name="cart"><ion-badge id="badge-me" color="custom_danger">2</ion-badge></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content >
+  <ion-grid>
+      <ion-row>
+        <ion-slides style="width:100%;height:150px;" autoplay="2500" loop=true>
+          <ion-slide style="background-image: url('./assets/img/splashbg-red.jpg'); background-size:cover;">
+          </ion-slide>
+          <ion-slide style="background-image: url('./assets/images/banner.jpg'); background-size:cover;">
+          </ion-slide>
+        </ion-slides>
+      </ion-row>
+      <ion-row justify-content-center>
+        <ion-searchbar (ionInput)="getItems($event)" placeholder="{{ 'SEARCH_PLACEHOLDER' | translate }}"></ion-searchbar>
+      </ion-row>
+    </ion-grid>
+    <ion-list>
+
+
+    <button ion-item clear *ngFor="let catalog of categories"><!--</button> [navParams]="catalog"-->
+      <ion-thumbnail item-left>
+        <img *ngIf="catalog.data.image == null" src="./assets/images/thumbnail.jpg" />
+        <img *ngIf="catalog.data.image != null" [src]="catalog.data.image.imageCategoryPath" />
+        <ion-badge color="custom_dark">{{catalog.data.product_count}}</ion-badge>
+      </ion-thumbnail>
+      <h2>{{catalog.data.name}}</h2>
+      <!-- <p> {{catalog.description}}</p> -->
+      <!-- <button ion-right icon-only clear (click)="openPage()" > -->
+        <ion-icon name="eye" item-right color="custom_danger"></ion-icon>
+      <!-- </button>/ -->
+    </button>
+
+    </ion-list>
+
+</ion-content>

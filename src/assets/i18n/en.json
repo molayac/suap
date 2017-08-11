@@ -1,5 +1,7 @@
 {
   "BACK_BUTTON_TEXT" : "Back",
+  "CART_TITLE" : "Shopping Cart",
+  "LOADING" : "Loading...",
 
   "NAME": "Name",
   "EMAIL": "Email",
@@ -7,6 +9,21 @@
   "PASSWORD": "Password",
   "LOGIN": "Sign in",
   "SIGNUP": "Sign up",
+
+  "LASTNAME": "LastName",
+  "DOCUMENT_TYPE": "ID Type",
+  "DOCUMENT_NUMBER": "ID Number",
+  "GENDER": {
+    "LABEL": "Gender",
+    "MALE": "Male",
+    "FEMALE": "Female"
+  },
+  "SIGNUP_SUCCESS": "Signup Success!",
+  "HOWTO":{
+    "ACTIVATE_ACCOUNT":"We send you a token to your email, in order to activate your account, you must to input here: "
+  },
+  "CONFIRM ACCOUNT": "Confirm Account",
+  "UNDEFINED": "Undefined",
 
   "TAB1_TITLE": "Items",
   "TAB2_TITLE": "Search",

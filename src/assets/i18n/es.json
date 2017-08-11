@@ -1,34 +1,59 @@
 {
+  "BACK_BUTTON_TEXT" : "Volver",
+  "CART_TITLE" : "Cesta de Compras",
+  "LOADING" : "Cargando...",
+
   "NAME": "Nombre",
   "PASSWORD": "Contraseña",
   "EMAIL": "Email",
   "LOGIN": "Iniciar sesión",
   "SIGNUP": "Registrarse",
 
-  "TAB1_TITLE": "Items",
+  "LASTNAME": "Apellidos",
+  "DOCUMENT_TYPE": "Tipo de documento",
+  "DOCUMENT_NUMBER": "Número de documento",
+  "GENDER": {
+    "LABEL": "Género",
+    "MALE": "Masculino",
+    "FEMALE": "Femenino"
+  },
+  "SIGNUP_SUCCESS": "Registro Exitoso!",
+  "HOWTO":{
+    "ACTIVATE_ACCOUNT":"Se le ha enviado un código al correo electrónico, para confirmar su cuenta, debe ingresarlo a continuación:"
+  },
+  "CONFIRM ACCOUNT": "Confimar Cuenta",
+  "UNDEFINED":"No definido",
+
+  "TAB1_TITLE": "Catálogo",
   "TAB2_TITLE": "Buscar",
   "TAB3_TITLE": "Ajustes",
 
   "MAP_TITLE": "Mapa",
 
-  "TUTORIAL_SLIDE1_TITLE": "Bienvenido/a al Ionic Super Starter",
-  "TUTORIAL_SLIDE1_DESCRIPTION": "El <b>Ionic Super Starter</b> es un starter de Ionic completo con muchas páginas preconstruidas y mejores prácticas.",
+  "TUTORIAL_SKIP_BUTTON" : "Saltar",
+  "TUTORIAL_CONTINUE_BUTTON" : "Continuar",
 
-  "TUTORIAL_SLIDE2_TITLE": "Cómo usar el Super Starter",
-  "TUTORIAL_SLIDE2_DESCRIPTION": "Monta los varios tipos de página que quieras y quita los que no. Hemos incluido muchas estructuras de página comunes en apps móviles, como páginas de inicio de sesión y registro, pestañas, y esta página de tutorial.",
+  "TUTORIAL_SLIDE1_TITLE": "Bienvenido/a SurtiApp",
+  "TUTORIAL_SLIDE1_DESCRIPTION": "<b>(SUAP) SurtiApp</b> es una aplicación que permite realizar pedidos para surtir restaurantes, tiendas, supermecados y establecimientos, con los diferentes productos que ofrecemos.",
 
-  "TUTORIAL_SLIDE3_TITLE": "Empezando",
-  "TUTORIAL_SLIDE3_DESCRIPTION": "¿Necesitas ayuda? Échale un vistazo al README del Super Starter para ver el tutorial completo.",
+  "TUTORIAL_SLIDE2_TITLE": "¿Cómo funciona?",
+  "TUTORIAL_SLIDE2_DESCRIPTION": "Usted puede visualizar nuestros productos, incluso agregar a un carrito de compras, pero solo los usuarios registrados pueden solicitar los pedidos.<br/>Los pedidos tienen un tiempo de entrega máximo de 48 horas.",
+
+  "TUTORIAL_SLIDE3_TITLE": "Funcionalidades",
+  "TUTORIAL_SLIDE3_DESCRIPTION": "Usted puede contactarse con nosotros en cualquier momento, a través de nuestra sección de ayudas<ion-icon name='chatbubbles'></ion-icon>.<br/>Además puede revisar el histórico de pedidos presionando el botón de perfil <ion-icon name='contact'></ion-icon>",
+
+  "TUTORIAL_SLIDE4_TITLE": "¿Listo para empezar?",
 
   "SETTINGS_TITLE": "Ajustes",
-  "SETTINGS_OPTION1": "Opción 1",
-  "SETTINGS_OPTION2": "Opción 2",
+  "SETTINGS_OPTION1": "Recordar Credenciales",
+  "SETTINGS_OPTION2": "Idioma",
   "SETTINGS_OPTION3": "Opción 3",
   "SETTINGS_OPTION4": "Opción 4",
 
   "SETTINGS_PAGE_PROFILE": "Editar Perfil",
 
   "WELCOME_TITLE": "Bienvenido/a",
+  "WELCOME_INTRO" : "La aplicación para surtir tu negocio!",
 
   "LOGIN_TITLE": "Iniciar sesión",
   "LOGIN_ERROR": "No se ha podido iniciar sesión. Por favor revisa la información de la cuenta e inténtalo de nuevo.",
@@ -44,5 +69,6 @@
 
   "CARDS_TITLE": "Social",
 
-  "SEARCH_TITLE": "Buscar"
+  "SEARCH_TITLE": "Buscar",
+  "SEARCH_PLACEHOLDER" : "Buscar los productos en la lista, por nombre o categoría."
 }

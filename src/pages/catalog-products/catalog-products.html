@@ -1,0 +1,51 @@
+<!--
+  Generated template for the CatalogProductsPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="primary">
+    <button ion-button start menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>{{catalog.name}}</ion-title>
+    <ion-buttons end>
+      <button ion-button ion-item-left color="custom_light" [navPush]="loginPage">
+        <ion-icon name="contact"></ion-icon>
+      </button>
+      <button ion-button item-rigth color="custom_light" [navPush]="cartPage">
+        <ion-icon name="cart"><ion-badge id="badge-me" color="custom_danger">2</ion-badge></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+
+
+<ion-content bounce>
+  <ion-list>
+      <ion-list-header>
+        <ion-thumbnail item-left>
+          <img src="{{catalog.imagen}}">
+        </ion-thumbnail>
+        <h2>{{catalog.name}}</h2>
+        <p>{{catalog.description}}</p>
+        <ion-badge color="custom_danger">{{catalog.product_count}}</ion-badge>
+      </ion-list-header>
+    <ion-item *ngFor="let product of products">
+      <ion-avatar item-left>
+        <img src="./assets/images/thumbnail.jpg">
+      </ion-avatar>
+      <h2>{{product.name}}</h2>
+      <p>Precio: ${{product.price}} <small>COP</small></p>
+      <p>Descripción: {{product.custom_attributes[0].value}}</p>
+      <p><small>REF:{{product.sku}}</small></p>
+      <button ion-button item-right color="custom_danger" >
+        <ion-icon name="cart"></ion-icon>
+      </button>
+    </ion-item>
+    </ion-list>
+</ion-content>

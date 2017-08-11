@@ -1,5 +1,15 @@
 {
   "name": "SUAP",
   "app_id": "",
-  "type": "ionic-angular"
+  "type": "ionic-angular",
+  "proxies": [{
+      "path": "/magentoAPI",
+      "proxyUrl": "http://magento.local/magento/rest/V1"
+    },{
+      "path": "/magentoMedia",
+      "proxyUrl": "http://magento.local/magento/pub/media"
+  },{
+    "path": "/magentoAllApi",
+    "proxyUrl": "http://magento.local/magento/rest/all/V1"
+}]
 }

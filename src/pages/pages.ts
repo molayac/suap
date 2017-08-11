@@ -3,6 +3,7 @@ import { SearchPage } from './search/search';
 import { SettingsPage } from './settings/settings';
 import { TabsPage } from './tabs/tabs';
 import { TutorialPage } from './tutorial/tutorial';
+import { StorePage } from './store/store';
 
 // The page the user lands on after opening the app and without a session
 export const FirstRunPage = TutorialPage;

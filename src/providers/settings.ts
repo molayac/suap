@@ -60,6 +60,9 @@ export class Settings {
     return this.storage.get(this.SETTINGS_KEY)
       .then(settings => {
         return settings[key];
+      }).catch(err=>{
+        console.warn("Key no existe: ",err);
+        return null;
       });
   }
 
@@ -70,4 +73,6 @@ export class Settings {
   get allSettings() {
     return this.settings;
   }
+
+
 }

@@ -20,10 +20,13 @@ import { SignupPage } from '../pages/signup/signup';
 import { TabsPage } from '../pages/tabs/tabs';
 import { TutorialPage } from '../pages/tutorial/tutorial';
 import { WelcomePage } from '../pages/welcome/welcome';
+import { StorePage } from '../pages/store/store';
+import { CatalogPage } from '../pages/catalog/catalog';
 
 import { Api } from '../providers/api';
 import { Items } from '../mocks/providers/items';
 import { Settings } from '../providers/settings';
+import { StorageService } from '../providers/storage';
 import { User } from '../providers/user';
 
 import { Camera } from '@ionic-native/camera';
@@ -33,6 +36,14 @@ import { StatusBar } from '@ionic-native/status-bar';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { MgCustomerProvider } from '../providers/mg-customer/mg-customer';
+import { MgGlobalProvider } from '../providers/mg-global';
+import { MgProductsProvider } from '../providers/mg-products/mg-products';
+import { EffectsProvider } from '../providers/effects/effects';
+
+//plugins
+import { NativePageTransitions } from '@ionic-native/native-page-transitions';
+import { MgCategoriesProvider } from '../providers/mg-categories/mg-categories';
 
 // The translate loader needs to know where to load i18n files
 // in Ionic's static asset pipeline.
@@ -51,7 +62,8 @@ export function provideSettings(storage: Storage) {
     option1: true,
     option2: 'Ionitron J. Framework',
     option3: '3',
-    option4: 'Hello'
+    option4: 'Hello',
+    stores: []
   });
 }
 
@@ -71,7 +83,9 @@ export function provideSettings(storage: Storage) {
     SignupPage,
     TabsPage,
     TutorialPage,
-    WelcomePage
+    WelcomePage,
+    StorePage,
+    CatalogPage
   ],
   imports: [
     BrowserModule,
@@ -102,7 +116,9 @@ export function provideSettings(storage: Storage) {
     SignupPage,
     TabsPage,
     TutorialPage,
-    WelcomePage
+    WelcomePage,
+    StorePage,
+    CatalogPage
   ],
   providers: [
     Api,
@@ -112,9 +128,16 @@ export function provideSettings(storage: Storage) {
     GoogleMaps,
     SplashScreen,
     StatusBar,
+    NativePageTransitions,
+    StorageService,
     { provide: Settings, useFactory: provideSettings, deps: [Storage] },
     // Keep this to enable Ionic's runtime error handling during development
-    { provide: ErrorHandler, useClass: IonicErrorHandler }
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
+    MgCustomerProvider,
+    MgProductsProvider,
+    MgGlobalProvider,
+    EffectsProvider,
+    MgCategoriesProvider
   ]
 })
 export class AppModule { }
