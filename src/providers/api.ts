@@ -8,12 +8,12 @@ import 'rxjs/add/operator/map';
  */
 @Injectable()
 export class Api {
-  urlAPI: string = 'http://192.168.2.45/magento/rest/V1';
-  urlMedia: string = 'http://192.168.2.45/magento/pub/media';
-  urlAll: string = 'http://192.168.2.45/magento/rest/all/V1';
+  urlAPI: string = 'http://192.168.2.51/magento/rest/V1';
+  urlMedia: string = 'http://192.168.2.51/magento/pub/media';
+  urlAll: string = 'http://192.168.2.51/magento/rest/all/V1';
   // urlAPI: string = '/magentoAPI';
   // urlMedia: string = '/magentoMedia';
-  url: string = '/magentoAPI';
+  url: string;
   // urlAll: string = '/magentoAllApi';
   constructor(public http: Http, public toastCtrl: ToastController) {
     this.url = this.urlAPI;

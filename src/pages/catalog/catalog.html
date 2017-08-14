@@ -4,9 +4,9 @@
     <button ion-button start menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Categorías</ion-title>
+    <ion-title>Catálogos {{store.name}}</ion-title>
     <ion-buttons end>
-      <button ion-button ion-item-left color="custom_light" [navPush]="loginPage">
+      <button ion-button ion-item-left color="custom_light" [navPush]="welcomePage">
         <ion-icon name="contact"></ion-icon>
       </button>
       <button ion-button item-rigth color="custom_light" [navPush]="cartPage">
@@ -37,11 +37,11 @@
 
     <button ion-item clear *ngFor="let catalog of categories"><!--</button> [navParams]="catalog"-->
       <ion-thumbnail item-left>
-        <img *ngIf="catalog.data.image == null" src="./assets/images/thumbnail.jpg" />
-        <img *ngIf="catalog.data.image != null" [src]="catalog.data.image.imageCategoryPath" />
-        <ion-badge color="custom_dark">{{catalog.data.product_count}}</ion-badge>
+        <img *ngIf="catalog.imagenPath == null" src="./assets/images/thumbnail.jpg" />
+        <img *ngIf="catalog.imagenPath != null" [src]="catalog.imagenPath" />
+        <ion-badge color="custom_dark">{{catalog.product_count}}</ion-badge>
       </ion-thumbnail>
-      <h2>{{catalog.data.name}}</h2>
+      <h2>{{catalog.name}}</h2>
       <!-- <p> {{catalog.description}}</p> -->
       <!-- <button ion-right icon-only clear (click)="openPage()" > -->
         <ion-icon name="eye" item-right color="custom_danger"></ion-icon>

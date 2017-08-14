@@ -6,7 +6,7 @@ import { StorePage } from '../store/store';
 
 import { TranslateService } from '@ngx-translate/core';
 import { MgGlobalProvider } from '../../providers/mg-global';
-
+import { Magento2ServiceProvider } from '../../providers/magento2-service/magento2-service';
 
 export interface Slide {
   title: string;
@@ -27,9 +27,11 @@ export class TutorialPage {
   statusLoad: any;
   loading: any;
   error:any = null;
+  stores:any = [];
 
   constructor(public navCtrl: NavController, public menu: MenuController, translate: TranslateService, private mgService: MgGlobalProvider,
-    public loadingCtrl: LoadingController, public alertCtrl: AlertController, public toastCtrl:ToastController) {
+    public loadingCtrl: LoadingController, public alertCtrl: AlertController, public toastCtrl:ToastController,
+    public mg2Service: Magento2ServiceProvider) {
     this.loading = {
       spinner: "circles",
       showBackdrop: true,
@@ -121,7 +123,18 @@ export class TutorialPage {
       loading.present();
     } else {
       loading.dismiss();
-      this.navCtrl.setRoot(StorePage, { loaded: true }, {
+      console.log("Enabled");
+      this.organizeStores(this.statusLoad[0]);
+      this.organizeCatalogStores(this.statusLoad);
+      this.mg2Service.setHistory(this.stores);
+      this.toastCtrl.create({
+        message: "Completada la descarga!",
+        duration: 3000,
+        position: 'top',
+        showCloseButton:true,
+        closeButtonText:"Ok"
+      }).present();
+      this.navCtrl.setRoot(StorePage, { loaded: true, statusLoad: this.stores }, {
         animate: true,
         direction: 'forward'
       });
@@ -132,65 +145,162 @@ export class TutorialPage {
     this.showSkip = !slider.isEnd();
   }
 
-  private _initLoad(retry = false) {
-    let loading: any;
-    this.loading.content = "<b>Conectando y descargando </b> datos de las tiendas desde el Servidor...";
-    loading = this.loadingCtrl.create(this.loading);
-    let loaded = this.mgService.getIsLoaded();
-    if( loaded >=2 )
-      return;
+  private _initLoad() {
 
-    loading.present();
-    this.mgService.isReady().then((data) => {
-      this.statusLoad[this.statusLoad.findIndex((obj => {
-        return obj.key == "ST";
-      }))].status = true;
-      this.mgService.categoriesAreReady().then((data) => {
-        this.disableSkip = false;
-        this.statusLoad[this.statusLoad.findIndex((obj => obj.key == "CT"))].status = true;
-        this.showAlert("Datos Cargados!",
-          this.getStatus(3000, false),
-          [{
-            text: 'Continuar',
-            handler: data => {
-              this.startApp();
-            }
-          }]
-        );
-        console.log("LOAD PAGE");
-      }).catch(err => {
-        console.warn("Error loading categories");
-        this.showAlert("Error de conexión al servidor!",
-          "<b>Mientras se descargaban los catálogos<b><br>"+this.getStatus(3000, true),
-          [{
-            text: 'Reintentar',
-            handler: data => {
-              this._initLoad();
-            }
-          }]
-        );
-      });
-    }).catch(err => {
-      console.warn("Error loading categories");
-      this.error=JSON.stringify(err);
-      this.toastCtrl.create({
-        message:"Error: "+JSON.stringify(err),
-        duration: 10000
-      }).present();
-      this.showAlert("Error de conexión al servidor!",
-        "<b>Mientras se descargaban las tiendas<b><br>"+this.getStatus(3000, true),
-        [{
-          text: 'Reintentar',
-          handler: data => {
-            this._initLoad();
-          }
-        }]
-      );
-    });
   }
 
   ionViewDidLoad() {
-    this._initLoad();
+    let loading: any;
+    this.loading.content = "<b>Conectando y descargando </b> datos de las tiendas desde el Servidor...";
+    loading = this.loadingCtrl.create(this.loading);
+    let indexParentStore;
+    let indexParent;
+    loading.present();
+    if(!this.mg2Service.isReady()){
+      this.loadStores();
+      this.loadCategories();
+    } else{
+      console.log("Loaded Data");
+      this.disableSkip = false;
+      this.stores = this.mg2Service.getHistory();
+    }
+
+    // this._initLoad();
+  }
+
+  private loadStores(){
+    let indexParentStore;
+    this.mg2Service.getStores().subscribe(dataStore=>{
+      indexParentStore = this.statusLoad.findIndex((obj => obj.key == "ST"));
+      dataStore = dataStore.filter(item=>{return item.name !== "Default";});
+      this.statusLoad[indexParentStore].data = dataStore
+      console.log("STORES: "+indexParentStore, this.statusLoad[indexParentStore].data, "poppppp",dataStore );
+      dataStore.forEach((item, index)=>{
+          this.mg2Service.getCategoriesById(item.root_category_id).subscribe(img=>{
+            console.log("STATUSLOAD STOIRES: "+index, this.statusLoad[indexParentStore].data[index]);
+            this.statusLoad[indexParentStore].status = true;
+            this.statusLoad[indexParentStore].data[index].img = img;
+            this.toastCtrl.create({
+              message: "Tienda Completada: "+item.name,
+              duration: 3000
+            }).present();
+            this.getStatus(3000, false);
+          }, err=>{
+            this.toastCtrl.create({
+              message: "Error descargando imágen tienda: "+item.name,
+              duration: 3000
+            }).present();
+            this.statusLoad[indexParentStore].status = true;
+            this.statusLoad[indexParentStore].data[index].img = null;
+            this.statusLoad[indexParentStore].data[index].err = true;
+          });
+      });
+
+    }, err =>{
+      indexParentStore = this.statusLoad.findIndex((obj => obj.key == "ST"));
+      this.toastCtrl.create({
+        message: "Error descargando tiendas!",
+        duration: 3000,
+        showCloseButton:true,
+        closeButtonText:"Nooo!!"
+      }).present();
+      this.statusLoad[indexParentStore].status = false;
+      this.statusLoad[indexParentStore].error = true;
+      this.statusLoad[indexParentStore].data = err;
+    });
+  }
+
+  private loadCategories(){
+    let indexParent;
+    this.mg2Service.getCategories().subscribe(data=>{
+      indexParent = this.statusLoad.findIndex((obj => obj.key == "CT"));
+      // this.statusLoad[indexParent].status = true;
+      this.statusLoad[indexParent].data = data;
+      console.log("****: "+indexParent,data);
+      data.children_data.forEach((item, index)=>{
+        let childrens:any = [];
+        item.children_data.forEach((myItem, myIndex)=>{
+            this.mg2Service.getCategoriesById(myItem.id).subscribe(img=>{
+              this.statusLoad[indexParent].status = true;
+              childrens.push({root_category: item.id, data:img});
+              console.log("Imagen Catgorias: ", childrens,"INDEX:"+ index, myIndex, this.statusLoad[indexParent].data );
+              this.statusLoad[indexParent].data.children_data[index].children_data[myIndex].img = img;
+              this.toastCtrl.create({
+                message: "Catálogo Completado "+myItem.name,
+                duration: 3000
+              }).present();
+              this.getStatus(3000, false);
+            }, err=>{
+              this.toastCtrl.create({
+                message: "Error descargando imágen catálogo: "+myItem.name,
+                duration: 3000
+              }).present();
+              this.statusLoad[indexParent].status = true;
+              console.warn("Error cargando categorias imagenes!");
+            });
+        });
+
+      });
+    }, err=>{
+      indexParent = this.statusLoad.findIndex((obj => obj.key == "CT"));
+      console.log("STATUSLOAD CAT: ", this.statusLoad[indexParent]);
+      this.statusLoad[indexParent].status = false;
+      this.statusLoad[indexParent].error = true;
+      this.statusLoad[indexParent].data = err;
+      this.loadCategories();
+      this.toastCtrl.create({
+        message: "Error descargando catálogos!",
+        duration: 3000
+      }).present();
+
+    });
+  }
+
+  private organizeCatalogStores(data) {
+    data[1].data.children_data.forEach((myItem, myIndex) => {
+      console.log("ITEM: ", myItem);
+      let categories: any = [];
+      let index = this.stores.findIndex((obj => obj.root_category_id == myItem.id));
+
+      myItem.children_data.forEach(item => {
+        let img = item.img;
+        console.log("ITEM CAT;:", item);
+        let imagen = null;
+        if (img != null && img.custom_attributes.length > 0) {
+          let index = img.custom_attributes.findIndex(obj => {
+            return obj.attribute_code == "image";
+          });
+          if (index >= 0)
+            imagen = this.mg2Service.getPubMediaBaseURL() + "/catalog/category/" + img.custom_attributes[index].value;
+        }
+        item.imagenPath = imagen;
+        categories.push(item);
+      });
+
+      console.log("CATEGORIES: ", categories);
+      if (index >= 0)
+        this.stores[index]["categories"] = myItem.children_data;
+
+    });
+    console.log("ALL: ", this.stores);
+  }
+
+  private organizeStores(stores) {
+    stores.data.forEach((item) => {
+      let img = item.img;
+      let imagen = null;
+      if (img != null && img.custom_attributes.length > 0) {
+        let index = img.custom_attributes.findIndex(obj => {
+          return obj.attribute_code == "image";
+        });
+        if (index >= 0)
+          imagen = this.mg2Service.getPubMediaBaseURL() + "/catalog/category/" + img.custom_attributes[index].value;
+      }
+      item.imagenPath = imagen;
+      this.stores.push(item);
+    })
+    console.log("Stores imgapath: ", this.stores);
+
   }
 
   ionViewDidEnter() {
