@@ -3,7 +3,7 @@ import { IonicPage, NavController, NavParams, ToastController, LoadingController
 import { MgGlobalProvider } from '../../providers/mg-global';
 import { MgImagen } from '../../models/mg-imagen';
 import { EffectsProvider } from '../../providers/providers';
-
+import { WelcomePage } from '../welcome/welcome';
 /**
  * Generated class for the CatalogPage page.
  *
@@ -17,7 +17,8 @@ import { EffectsProvider } from '../../providers/providers';
   templateUrl: 'catalog.html',
 })
 export class CatalogPage {
-  _store: any;
+  welcomePage:any=WelcomePage;
+  store: any;
   _products: any = null;
   _catalogs: any = [];
   categories: any;
@@ -33,14 +34,14 @@ export class CatalogPage {
     let isReady = navParams.get("loaded");
     if (store != null && store != undefined) {
       console.log("Loading Store on Categories: ", store);
-      this._store = store;
+      this.store = store;
       this.categories = store.categories;
     }
   }
 
   ionViewDidLoad() {
+    this.effects.effectFlip();
   }
-
 
   showAlert(title, msg, inputs, buttons) {
     let alert;
@@ -62,31 +63,8 @@ export class CatalogPage {
     alert.present();
   }
 
-  private loadCatalog(categories) {
-    var ofertas = categories.children_data[0].children_data[0];
-    ofertas.description = "Las mejores ofertas!";
-    ofertas.icon = "star";
-    ofertas.imagen = "./assets/images/ofertas.png";
-    var alimentos = categories.children_data[0].children_data[1];
-    alimentos.description = "Todo en alimentos!";
-    alimentos.icon = "basket";
-    alimentos.imagen = "./assets/images/alimentos.png";
-    var aseo = categories.children_data[0].children_data[2];
-    aseo.description = "Productos para el hogar!";
-    aseo.icon = "home";
-    aseo.imagen = "./assets/images/aseohogar.jpg";
-    var cuidado = categories.children_data[0].children_data[3];
-    cuidado.description = "Productos para la familia!";
-    cuidado.icon = "body";
-    cuidado.imagen = "./assets/images/cuidadopersonal.jpg";
-    this.categories.push(ofertas);
-    this.categories.push(alimentos);
-    this.categories.push(aseo);
-    this.categories.push(cuidado);
-  }
+  ionViewDidEnter() {
 
-  ionViewDidLeave() {
-    this.effects.effectFlip();
   }
 
 }

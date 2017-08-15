@@ -44,6 +44,7 @@ import { EffectsProvider } from '../providers/effects/effects';
 //plugins
 import { NativePageTransitions } from '@ionic-native/native-page-transitions';
 import { MgCategoriesProvider } from '../providers/mg-categories/mg-categories';
+import { Magento2ServiceProvider } from '../providers/magento2-service/magento2-service';
 
 // The translate loader needs to know where to load i18n files
 // in Ionic's static asset pipeline.
@@ -59,10 +60,12 @@ export function provideSettings(storage: Storage) {
    * these values will not overwrite the saved values (this can be done manually if desired).
    */
   return new Settings(storage, {
+    URLBASE:"http://192.168.2.51/magento",
     option1: true,
     option2: 'Ionitron J. Framework',
     option3: '3',
     option4: 'Hello',
+    showTutorial: true,
     stores: []
   });
 }
@@ -128,7 +131,7 @@ export function provideSettings(storage: Storage) {
     GoogleMaps,
     SplashScreen,
     StatusBar,
-    NativePageTransitions,
+    NativePageTransitions, //Utilizado para los efectos entre pantallas
     StorageService,
     { provide: Settings, useFactory: provideSettings, deps: [Storage] },
     // Keep this to enable Ionic's runtime error handling during development
@@ -137,7 +140,8 @@ export function provideSettings(storage: Storage) {
     MgProductsProvider,
     MgGlobalProvider,
     EffectsProvider,
-    MgCategoriesProvider
+    MgCategoriesProvider,
+    Magento2ServiceProvider
   ]
 })
 export class AppModule { }

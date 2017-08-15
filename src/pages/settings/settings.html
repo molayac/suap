@@ -11,6 +11,14 @@
   <form [formGroup]="form" *ngIf="settingsReady">
     <ion-list *ngIf="page == 'main'">
       <ion-item>
+        <ion-label>URL Base</ion-label>
+        <ion-input formControlName="URLBASE"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Tutorial al inicio? </ion-label>
+        <ion-toggle formControlName="showTutorial"></ion-toggle>
+      </ion-item>
+      <ion-item>
         <ion-label>{{ 'SETTINGS_OPTION1' | translate }}</ion-label>
         <ion-toggle formControlName="option1"></ion-toggle>
       </ion-item>
