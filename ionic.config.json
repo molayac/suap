@@ -1,15 +1,22 @@
 {
   "name": "SUAP",
-  "app_id": "",
+  "app_id": "48b860bf",
   "type": "ionic-angular",
-  "proxies": [{
-      "path": "/magentoAPI",
+  "proxies": [
+    {
+      "path": "/magento/rest/V1",
       "proxyUrl": "http://192.168.2.51/magento/rest/V1"
-    },{
-      "path": "/magentoMedia",
+    },
+    {
+      "path": "/magento/pub/media",
       "proxyUrl": "http://192.168.2.51/magento/pub/media"
-  },{
-    "path": "/magentoAllApi",
-    "proxyUrl": "http://192.168.2.51/magento/rest/all/V1"
-}]
+    },
+    {
+      "path": "/magento/rest/all/V1",
+      "proxyUrl": "http://192.168.2.51/magento/rest/all/V1"
+    }
+  ],
+  "integrations": {
+    "cordova": {}
+  }
 }

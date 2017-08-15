@@ -43,6 +43,8 @@ export class SettingsPage {
 
   _buildForm() {
     let group: any = {
+      showTutorial: [this.options.showTutorial],
+      URLBASE: [this.options.URLBASE],
       option1: [this.options.option1],
       option2: [this.options.option2],
       option3: [this.options.option3]

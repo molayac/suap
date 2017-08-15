@@ -31,51 +31,37 @@ export class StorePage {
     private mg2Service: Magento2ServiceProvider) {
 
     this.stores = this.navParams.get("statusLoad");
-    console.log("STORE: ", this.data);
+    console.log("STORES: ", this.stores);
     this.isReady = this.navParams.get("loaded");
 
   }
 
   openStore(store) {
-    this.navCtrl.setRoot(CatalogPage, { store: store, loaded: true });
+    this.navCtrl.push(CatalogPage, { store: store, loaded: true });
   }
 
   ionViewDidLoad() {
+    this.effects.effectFlip();
     let loading = this.loadingCtrl.create({
       spinner: "circles",
       content: "<b>Conectando y descargando </b> datos de Servidor..."
     });
     loading.present();
-    if(this.mg2Service.isReady())
-      this.isReady = true;
-    if (!this.isReady) {
-      this.mgService.isReady().then(val => {
-        this.stores = val;
-        console.log("VAL: ", val, "Stores:", this.stores);
-        loading.dismiss();
-      }).catch(err => {
-        loading.dismiss();
-        this.toastCtrl.create({
-          message: "No hemos podido conectarnos con el servidor, por favor verifique su conexión a internet e intente nuevamente.",
-          duration: 2500
-        }).present();
-        console.error("Error STORE: ", err);
-      });
-    } else {
-      // if (this.data != null && this.data.length > 0)
-      //   this.organizeStores(this.data[0]);
-      //
-      // if (this.data != null && this.data.length > 0)
-      //   this.organizeCatalogStores(this.data);
+
+    console.log("YES SETTINGS");
+    this.mg2Service.getHistory().then(data => {
       loading.dismiss();
-      this.stores= this.mg2Service.getHistory();
-    }
+      console.log("Loaded data: ", data);
+      if (data != null && data.length > 0) {
+        this.stores = data
+      } else {
+        console.error("ERROR GRAVE!");
+      }
+    });
+
   }
 
-
-
-  ionViewDidLeave() {
-    this.effects.effectFlip();
+  ionViewDidEnter() {
   }
 
 }

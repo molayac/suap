@@ -10,13 +10,22 @@ export class Settings {
   private SETTINGS_KEY: string = '_settings';
 
   settings: any;
-
   _defaults: any;
-  _readyPromise: Promise<any>;
 
-  constructor(public storage: Storage, defaults: any) {
-    this._defaults = defaults;
+  constructor(public storage: Storage, defaults?: any) {
+    if(!defaults)
+      this._defaults = {URLBASE:"http://192.168.2.51/magento"};
+    else
+      this._defaults = defaults;
   }
+
+  getDefaults(key?:string){
+    if(!key)
+      return this._defaults;
+    else
+      return this._defaults[key];
+  }
+
 
   load() {
     return this.storage.get(this.SETTINGS_KEY).then((value) => {
@@ -32,6 +41,7 @@ export class Settings {
   }
 
   _mergeDefaults(defaults: any) {
+    console.log("Merge Defaults");
     for (let k in defaults) {
       if (!(k in this.settings)) {
         this.settings[k] = defaults[k];
@@ -60,8 +70,8 @@ export class Settings {
     return this.storage.get(this.SETTINGS_KEY)
       .then(settings => {
         return settings[key];
-      }).catch(err=>{
-        console.warn("Key no existe: ",err);
+      }).catch(err => {
+        console.error("Error ", err);
         return null;
       });
   }
@@ -70,9 +80,7 @@ export class Settings {
     return this.setAll(this.settings);
   }
 
-  get allSettings() {
+  allSettings() {
     return this.settings;
   }
-
-
 }

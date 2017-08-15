@@ -42,7 +42,7 @@ export class LoginPage {
   doLogin() {
     this.mgService.login(this.account).then((resp) => {
       console.log("logged in!");
-      this.navCtrl.push(StorePage);
+      this.navCtrl.setRoot(StorePage);
     }).catch(err => {
       // this.navCtrl.push(WelcomePage);
       // Unable to log in

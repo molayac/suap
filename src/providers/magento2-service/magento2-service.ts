@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { Api } from '../api';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
-
+import { Settings } from '../settings';
 /*
   Generated class for the Magento2ServiceProvider provider.
   See https://angular.io/docs/ts/latest/guide/dependency-injection.html
@@ -27,7 +27,7 @@ export class Magento2ServiceProvider {
   private _history:any;
   public headers: any = new Headers({ 'Content-Type': 'application/json' });
 
-  constructor(public http: Http, public api:Api) {
+  constructor(public http: Http, public api:Api, private settings: Settings) {
     this.magentoAPI = "http://192.168.2.51/magento/rest/V1/"; // Used for app builder
     // this.magentoAPI = "/magentoAPI/";
     this.mg2Catalog = [];
@@ -176,19 +176,33 @@ export class Magento2ServiceProvider {
 
   setHistory(history){
     this.isReadyAll = true;
+    this.settings.setValue("stores", history );
     this._history = history;
   }
 
+  setBaseUrl(url){
+    this.api.setUrl(url);
+    return this.settings.setValue("URLBASE", url);
+  }
+
   getHistory(){
-    return this._history;
+    return this.settings.getValue("stores");
+    // return this._history;
   }
 
   getPubMediaBaseURL(){
-    return this.api.urlMedia;
+    return this.api.getUrlMedia();
+  }
+
+  settingsLoad(){
+    return this.settings.load();
   }
 
   isReady(){
     return this.isReadyAll;
+  }
+  setReady(){
+    this.isReadyAll  =true;
   }
 
 }

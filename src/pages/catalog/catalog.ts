@@ -40,7 +40,7 @@ export class CatalogPage {
   }
 
   ionViewDidLoad() {
-
+    this.effects.effectFlip();
   }
 
   showAlert(title, msg, inputs, buttons) {
@@ -63,8 +63,8 @@ export class CatalogPage {
     alert.present();
   }
 
-  ionViewDidLeave() {
-    this.effects.effectFlip();
+  ionViewDidEnter() {
+
   }
 
 }

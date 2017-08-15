@@ -1,22 +1,34 @@
 import { Injectable } from '@angular/core';
 import { Http, RequestOptions, URLSearchParams } from '@angular/http';
-import { ToastController } from 'ionic-angular';
+import { ToastController, Platform } from 'ionic-angular';
 import 'rxjs/add/operator/map';
+import { Settings } from './settings';
 
 /**
  * Api is a generic REST Api handler. Set your API url first.
  */
 @Injectable()
 export class Api {
-  urlAPI: string = 'http://192.168.2.51/magento/rest/V1';
-  urlMedia: string = 'http://192.168.2.51/magento/pub/media';
-  urlAll: string = 'http://192.168.2.51/magento/rest/all/V1';
+  urlAPI: string = '/rest/V1';
+  urlMedia: string = '/pub/media';
+  urlAll: string = '/rest/all/V1';
   // urlAPI: string = '/magentoAPI';
   // urlMedia: string = '/magentoMedia';
   url: string;
+  urlbase:string = "";
   // urlAll: string = '/magentoAllApi';
-  constructor(public http: Http, public toastCtrl: ToastController) {
-    this.url = this.urlAPI;
+
+  constructor(public http: Http, public toastCtrl: ToastController, private settings:Settings, private platform: Platform) {
+
+
+    this.urlbase = this.settings.getDefaults("URLBASE");
+    if(!platform.is("cordova"))
+      this.url = "/magento"+this.urlAPI;
+    else
+      this.url = this.urlbase + this.urlAPI
+
+     console.log("URL BASE: ", this.url);
+
   }
 
   get(endpoint: string, params?: any, options?: RequestOptions) {
@@ -63,17 +75,22 @@ export class Api {
   }
 
   setUrlMedia() {
-    this.url = this.urlMedia;
+    this.url = (this.urlbase != null && this.platform.is("cordova"))? this.urlbase+this.urlMedia : "/magento"+this.urlMedia;
   }
   setUrlAllApi() {
-    this.url = this.urlAll;
+    this.url = (this.urlbase != null && this.platform.is("cordova"))? this.urlbase+this.urlAll : "/magento"+this.urlAll;
+  }
+
+  getUrlMedia(){
+    return (this.urlbase != null && this.platform.is("cordova"))? this.urlbase+this.urlMedia : "/magento"+this.urlMedia;
   }
 
   setUrl(url: string) {
-    this.url = url;
+    this.urlbase = url;
+    this.url = (this.urlbase != null && this.platform.is("cordova"))? url + this.urlAPI: "/magento"+this.urlAPI;
   }
 
   setUrlAPI() {
-    this.url = this.urlAPI;
+    this.url = (this.urlbase != null && this.platform.is("cordova"))? this.urlbase+this.urlAPI : "/magento"+this.urlAPI;
   }
 }

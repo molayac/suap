@@ -17,7 +17,7 @@ import { SignupPage } from '../pages/signup/signup';
 import { TabsPage } from '../pages/tabs/tabs';
 import { TutorialPage } from '../pages/tutorial/tutorial';
 import { WelcomePage } from '../pages/welcome/welcome';
-
+import { StorePage } from '../pages/store/store';
 import { Settings, EffectsProvider, MgProductsProvider, MgCustomerProvider } from '../providers/providers';
 
 import { TranslateService } from '@ngx-translate/core'
@@ -42,7 +42,7 @@ import { TranslateService } from '@ngx-translate/core'
   <ion-nav #content [root]="rootPage"></ion-nav>`
 })
 export class MyApp {
-  rootPage = FirstRunPage;
+  rootPage:any = FirstRunPage;
 
   @ViewChild(Nav) nav: Nav;
 
@@ -61,7 +61,17 @@ export class MyApp {
     { title: 'Search', component: SearchPage }
   ]
 
-  constructor(private translate: TranslateService, private platform: Platform, settings: Settings, private config: Config, private statusBar: StatusBar, private splashScreen: SplashScreen) {
+  constructor(private translate: TranslateService,
+     private platform: Platform, settings: Settings, private config: Config, private statusBar: StatusBar, private splashScreen: SplashScreen) {
+    settings.load().then(data=>{
+      settings.getValue("showTutorial").then((data)=>{
+        console.log("DATA LOADTUTORUAL: ", data);
+        if(data)
+          this.rootPage = StorePage;
+      })
+    }).catch(err=>{
+      console.log("NO TUTORIAL SHOWED");
+    });
     this.initTranslate();
   }
 

@@ -7,7 +7,7 @@ import { StorePage } from '../store/store';
 import { TranslateService } from '@ngx-translate/core';
 import { MgGlobalProvider } from '../../providers/mg-global';
 import { Magento2ServiceProvider } from '../../providers/magento2-service/magento2-service';
-
+import { Settings } from '../../providers/providers';
 export interface Slide {
   title: string;
   description: string;
@@ -28,10 +28,11 @@ export class TutorialPage {
   loading: any;
   error:any = null;
   stores:any = [];
+  tap:number = 0;
 
   constructor(public navCtrl: NavController, public menu: MenuController, translate: TranslateService, private mgService: MgGlobalProvider,
     public loadingCtrl: LoadingController, public alertCtrl: AlertController, public toastCtrl:ToastController,
-    public mg2Service: Magento2ServiceProvider) {
+    public mg2Service: Magento2ServiceProvider, private settings: Settings) {
     this.loading = {
       spinner: "circles",
       showBackdrop: true,
@@ -71,6 +72,30 @@ export class TutorialPage {
       });
   }
 
+  ionViewDidLoad() {
+    console.log("ION VIEW LOAD");
+    this.mg2Service.settingsLoad().then(()=>{
+        console.log("YES SETTINGS");
+        this.mg2Service.getHistory().then(data=>{
+
+          console.log("Loaded data: ", data);
+          if(data != null && data.length >0){
+            this.stores = data
+            this.disableSkip =false;
+            this.mg2Service.setReady();
+          }else
+            this._initLoad();
+      }).catch(err=>{
+        console.error("Settings not data: ", err);
+        this._initLoad();
+      });
+    }).catch(()=>{
+      console.log("NO SETTINGS");
+      this._initLoad();
+    });
+
+  }
+
   private showAlert(title, msg, buttons, inputs = null) {
     let alert;
     if (inputs == null) {
@@ -102,7 +127,7 @@ export class TutorialPage {
         counter++;
         content += '<li><strike><b>' + item.name + '</strike></b> --- <bigger><b><u>OK</u></b></bigger></li>';
       } else {
-        if (!error)
+        if (!item.error)
           content += '<li><b>' + item.name + '</b> --- <bigger><b><u>DESCARGANDO...</u></b></bigger></li>';
         else
           content += '<li><b>' + item.name + '</b> --- <bigger><b><u>ERROR CONEXIÓN (500)</u></b></bigger></li>';
@@ -121,23 +146,29 @@ export class TutorialPage {
       console.log("DISABLED");
       this.getStatus(3000, false);
       loading.present();
+      return;
     } else {
+
       loading.dismiss();
       console.log("Enabled");
-      this.organizeStores(this.statusLoad[0]);
-      this.organizeCatalogStores(this.statusLoad);
-      this.mg2Service.setHistory(this.stores);
-      this.toastCtrl.create({
-        message: "Completada la descarga!",
-        duration: 3000,
-        position: 'top',
-        showCloseButton:true,
-        closeButtonText:"Ok"
-      }).present();
+      if(!this.mg2Service.isReady()){
+        this.organizeStores(this.statusLoad[0]);
+        this.organizeCatalogStores(this.statusLoad);
+        this.mg2Service.setHistory(this.stores);
+        this.toastCtrl.create({
+          message: "Completada la descarga!",
+          duration: 3000,
+          position: 'top',
+          showCloseButton:true,
+          closeButtonText:"Ok"
+        }).present();
+      }
+      console.log("IS READY: "+this.mg2Service.isReady());
       this.navCtrl.setRoot(StorePage, { loaded: true, statusLoad: this.stores }, {
         animate: true,
         direction: 'forward'
       });
+      this.settings.setValue("showTutorial", false);
     }
   }
 
@@ -146,10 +177,6 @@ export class TutorialPage {
   }
 
   private _initLoad() {
-
-  }
-
-  ionViewDidLoad() {
     let loading: any;
     this.loading.content = "<b>Conectando y descargando </b> datos de las tiendas desde el Servidor...";
     loading = this.loadingCtrl.create(this.loading);
@@ -163,97 +190,106 @@ export class TutorialPage {
       console.log("Loaded Data");
       this.disableSkip = false;
       this.stores = this.mg2Service.getHistory();
+      this.showAlert("Datos cargados con éxito!",
+          "Desea saltar el tutorial?", [
+          {text:"NO"},
+          {text:"SI", handler:()=>this.startApp() }
+        ], null
+      );
     }
-
-    // this._initLoad();
   }
 
+
+
   private loadStores(){
-    let indexParentStore;
+    let indexParentStore = this.statusLoad.findIndex((obj => obj.key == "ST"));;
+    this.statusLoad[indexParentStore].data = null;
+    this.statusLoad[indexParentStore].error = false;
     this.mg2Service.getStores().subscribe(dataStore=>{
-      indexParentStore = this.statusLoad.findIndex((obj => obj.key == "ST"));
       dataStore = dataStore.filter(item=>{return item.name !== "Default";});
       this.statusLoad[indexParentStore].data = dataStore
       console.log("STORES: "+indexParentStore, this.statusLoad[indexParentStore].data, "poppppp",dataStore );
       dataStore.forEach((item, index)=>{
-          this.mg2Service.getCategoriesById(item.root_category_id).subscribe(img=>{
-            console.log("STATUSLOAD STOIRES: "+index, this.statusLoad[indexParentStore].data[index]);
-            this.statusLoad[indexParentStore].status = true;
-            this.statusLoad[indexParentStore].data[index].img = img;
-            this.toastCtrl.create({
-              message: "Tienda Completada: "+item.name,
-              duration: 3000
-            }).present();
-            this.getStatus(3000, false);
-          }, err=>{
-            this.toastCtrl.create({
-              message: "Error descargando imágen tienda: "+item.name,
-              duration: 3000
-            }).present();
-            this.statusLoad[indexParentStore].status = true;
-            this.statusLoad[indexParentStore].data[index].img = null;
-            this.statusLoad[indexParentStore].data[index].err = true;
-          });
+        this.loadStoreImage(indexParentStore, index, item);
       });
 
     }, err =>{
-      indexParentStore = this.statusLoad.findIndex((obj => obj.key == "ST"));
-      this.toastCtrl.create({
-        message: "Error descargando tiendas!",
-        duration: 3000,
-        showCloseButton:true,
-        closeButtonText:"Nooo!!"
-      }).present();
+      this.showAlert("Error descargando tiendas!",
+        "Puede reiniciar la aplicación o reintentar.\nDesea reintentar?",
+        [{text: "NO."}, {text:"SI", handler: ()=>this.loadStores()}]);
       this.statusLoad[indexParentStore].status = false;
       this.statusLoad[indexParentStore].error = true;
       this.statusLoad[indexParentStore].data = err;
     });
   }
 
+  private loadStoreImage(indexParentStore, index, item){
+    let id = item.root_category_id;
+    this.mg2Service.getCategoriesById(id).subscribe(img=>{
+      console.log("STATUSLOAD STOIRES: "+index, this.statusLoad[indexParentStore].data[index]);
+      this.statusLoad[indexParentStore].status = true;
+      this.statusLoad[indexParentStore].data[index].img = img;
+      this.toastCtrl.create({
+        message: "Tienda Completada: "+item.name,
+        duration: 3000
+      }).present();
+      this.getStatus(3000, false);
+    }, err=>{
+      this.showAlert("Error descargando imagen de la tienda: "+item.name,
+        "Puede reiniciar la aplicación o reintentar.\nDesea reintentar?",
+        [{text: "NO."}, {text:"SI", handler: ()=>this.loadStoreImage(indexParentStore, index, item)}]);
+      this.statusLoad[indexParentStore].status = true;
+      this.statusLoad[indexParentStore].data[index].img = null;
+      this.statusLoad[indexParentStore].data[index].err = true;
+    });
+  }
+
   private loadCategories(){
-    let indexParent;
+    let indexParent = this.statusLoad.findIndex((obj => obj.key == "CT"));
+    this.statusLoad[indexParent].error = false;
+    this.statusLoad[indexParent].data = null;
     this.mg2Service.getCategories().subscribe(data=>{
-      indexParent = this.statusLoad.findIndex((obj => obj.key == "CT"));
       // this.statusLoad[indexParent].status = true;
       this.statusLoad[indexParent].data = data;
       console.log("****: "+indexParent,data);
       data.children_data.forEach((item, index)=>{
         let childrens:any = [];
         item.children_data.forEach((myItem, myIndex)=>{
-            this.mg2Service.getCategoriesById(myItem.id).subscribe(img=>{
-              this.statusLoad[indexParent].status = true;
-              childrens.push({root_category: item.id, data:img});
-              console.log("Imagen Catgorias: ", childrens,"INDEX:"+ index, myIndex, this.statusLoad[indexParent].data );
-              this.statusLoad[indexParent].data.children_data[index].children_data[myIndex].img = img;
-              this.toastCtrl.create({
-                message: "Catálogo Completado "+myItem.name,
-                duration: 3000
-              }).present();
-              this.getStatus(3000, false);
-            }, err=>{
-              this.toastCtrl.create({
-                message: "Error descargando imágen catálogo: "+myItem.name,
-                duration: 3000
-              }).present();
-              this.statusLoad[indexParent].status = true;
-              console.warn("Error cargando categorias imagenes!");
-            });
+            this.loadCatalogImage(indexParent, index, myIndex, myItem);
         });
-
       });
     }, err=>{
-      indexParent = this.statusLoad.findIndex((obj => obj.key == "CT"));
       console.log("STATUSLOAD CAT: ", this.statusLoad[indexParent]);
       this.statusLoad[indexParent].status = false;
       this.statusLoad[indexParent].error = true;
       this.statusLoad[indexParent].data = err;
-      this.loadCategories();
+      this.showAlert("Error descargando catálogos!",
+        "Puede reiniciar la aplicación o reintentar.\nDesea reintentar?",
+        [{text: "NO."}, {text:"SI", handler: ()=>this.loadCategories()}]);
+    });
+  }
+
+  private loadCatalogImage(indexParent, index, myIndex, myItem){
+    this.mg2Service.getCategoriesById(myItem.id).subscribe(img=>{
+      this.statusLoad[indexParent].status = true;
+      console.log("Imagen Catgorias INDEX:"+ index, myIndex, this.statusLoad[indexParent].data );
+      this.statusLoad[indexParent].data.children_data[index].children_data[myIndex].img = img;
       this.toastCtrl.create({
-        message: "Error descargando catálogos!",
+        message: "Catálogo Completado "+myItem.name,
         duration: 3000
       }).present();
-
-    });
+      this.getStatus(3000, false);
+      }, err=>{
+        // this.toastCtrl.create({
+        //   message: "Error descargando imágen catálogo: "+myItem.name,
+        //   duration: 3000
+        // }).present();
+        this.showAlert("Error descargando imagen del catálogo: "+myItem.name,
+          "Puede reiniciar la aplicación o reintentar.\nDesea reintentar?",
+          [{text: "NO."}, {text:"SI", handler: ()=>this.loadCatalogImage(indexParent, index, myIndex, myItem)}]);
+        this.statusLoad[indexParent].status = true;
+        console.warn("Error cargando categorias imagenes!");
+      });
   }
 
   private organizeCatalogStores(data) {
@@ -311,6 +347,35 @@ export class TutorialPage {
   ionViewWillLeave() {
     // enable the root left menu when leaving the tutorial page
     this.menu.enable(true);
+  }
+
+  tapEvent(e){
+    if(this.tap > 10){
+      this.tap = 0;
+      this.showAlert("SECRET!", "Ha habilitado la configuración de URL Secreta!", [{text:"CANCELAR"},{
+          text: "CAMBIAR",
+          handler: action => {
+              this.mg2Service.setBaseUrl(action.urlbase).then(()=>{
+                console.log("OK");
+                this.toastCtrl.create({
+                  message: "Cambio URLBASE!: "+action.urlbase+"\nRecargando...",
+                  duration: 3000,
+                  position: 'middle',
+                  showCloseButton:true,
+                  closeButtonText:"Ok"
+                }).present();
+                this._initLoad();
+              }).catch(err=>{});
+          }
+        }],
+        [{
+            name: 'urlbase',
+            placeholder: '',
+            value:"http://192.168.2.51/magento"
+          }]
+      );
+    }
+    this.tap ++;
   }
 
 }

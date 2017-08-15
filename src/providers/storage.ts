@@ -15,6 +15,7 @@ export class StorageService {
   _readyPromise: Promise<any>;
 
   constructor(public storage: Storage) {
+    this._defaults={URLBASE:"http://192.168.2.51/magento"};
   }
 
   load(defaults:any=null) {
