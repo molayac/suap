@@ -12,7 +12,7 @@
     </button>
     <ion-title>{{catalog.name}}</ion-title>
     <ion-buttons end>
-      <button ion-button ion-item-left color="custom_light" [navPush]="loginPage">
+      <button ion-button ion-item-left color="custom_light" [navPush]="welcomePage">
         <ion-icon name="contact"></ion-icon>
       </button>
       <button ion-button item-rigth color="custom_light" [navPush]="cartPage">
@@ -52,7 +52,7 @@
       <p>
         <small>REF:{{product.sku}}</small>
       </p>
-      <button ion-button item-right color="custom_danger">
+      <button ion-button item-right color="custom_danger" (click)="viewProductDetails(product)">
         <ion-icon name="cart"></ion-icon>
       </button>
     </ion-item>

@@ -1,6 +1,6 @@
 <ion-header>
 
-  <ion-navbar>
+  <ion-navbar color="primary">
     <ion-title>{{ 'SIGNUP_TITLE' | translate }}</ion-title>
   </ion-navbar>
 
@@ -8,9 +8,12 @@
 
 
 <ion-content>
+  <br><br><br><br>
+  <div class="splash-info">
+    <div class="splash-logo"></div>
+  </div>
   <form (submit)="doSignup()">
     <ion-list>
-
       <ion-item>
         <ion-label fixed>{{ 'NAME' | translate }}</ion-label>
         <ion-input type="text" [(ngModel)]="account.name" name="name"></ion-input>
@@ -20,7 +23,6 @@
         <ion-label fixed>{{ 'EMAIL' | translate }}</ion-label>
         <ion-input type="email" [(ngModel)]="account.email" name="email"></ion-input>
       </ion-item>
-
       <!--
       Want to add a Username? Here you go:
 
@@ -41,4 +43,5 @@
 
     </ion-list>
   </form>
+
 </ion-content>

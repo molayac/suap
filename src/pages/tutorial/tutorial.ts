@@ -165,11 +165,12 @@ export class TutorialPage {
         }).present();
       }
       console.log("IS READY: "+this.mg2Service.isReady());
+      this.settings.setValue("showTutorial", false);
       this.navCtrl.setRoot(StorePage, { loaded: true, statusLoad: this.stores }, {
         animate: true,
         direction: 'forward'
       });
-      this.settings.setValue("showTutorial", false);
+
     }
   }
 

@@ -1,7 +1,11 @@
 import {Component} from '@angular/core';
-import {IonicPage, NavController, NavParams, LoadingController, ToastController} from 'ionic-angular';
+import {IonicPage, NavController, NavParams,
+  LoadingController, ToastController,
+  ModalController } from 'ionic-angular';
 import {Magento2ServiceProvider} from '../../providers/magento2-service/magento2-service';
 import {OfflineService} from '../../providers/offline';
+import {ProductDetailsPage} from "../product-details/product-details";
+import {WelcomePage} from "../welcome/welcome";
 
 
 @IonicPage()
@@ -10,6 +14,7 @@ import {OfflineService} from '../../providers/offline';
   templateUrl: 'catalog-products.html',
 })
 export class CatalogProductsPage {
+  welcomePage:any= WelcomePage;
   public products: any=[];
   public catalog: any;
   public loading: any;
@@ -19,8 +24,13 @@ export class CatalogProductsPage {
   public  _imagesAreReady:boolean = false;
   _enableInfiniteScrolling = true;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private offline: OfflineService,
-              public mg2Service: Magento2ServiceProvider, public loadingCtrl: LoadingController, public toastCtrl: ToastController) {
+  constructor(public modalCtrl:ModalController,
+              public navCtrl: NavController,
+              public navParams: NavParams,
+              private offline: OfflineService,
+              public mg2Service: Magento2ServiceProvider,
+              public loadingCtrl: LoadingController,
+              public toastCtrl: ToastController) {
     this.catalog = this.navParams.data;
     this._lastItem = {id: -1};
     this.products = [];
@@ -31,7 +41,6 @@ export class CatalogProductsPage {
   }
 
   ionViewDidLoad() {
-
 
     //let productsHistory = this.mgService.getCatalogProductsHistory();
     console.log("Offline: ", this.offline.getValue("NONE"));
@@ -57,6 +66,11 @@ export class CatalogProductsPage {
     });
 
     console.log('ionViewDidLoad ProductosPage');
+  }
+
+  viewProductDetails(product){
+    let modal = this.modalCtrl.create(ProductDetailsPage,{product:product});
+    modal.present();
   }
 
 

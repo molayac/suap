@@ -70,6 +70,7 @@ export function provideSettings(storage: Storage) {
     showTutorial: true,
     stores: []
   });
+
 }
 
 @NgModule({
