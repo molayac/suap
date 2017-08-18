@@ -35,7 +35,7 @@
     <ion-list>
 
 
-    <button ion-item clear *ngFor="let catalog of categories"><!--</button> [navParams]="catalog"-->
+    <button ion-item clear *ngFor="let catalog of categories" [navParams]="catalog" [navPush]="catalogProductsPage">
       <ion-thumbnail item-left>
         <img *ngIf="catalog.imagenPath == null" src="./assets/images/thumbnail.jpg" />
         <img *ngIf="catalog.imagenPath != null" [src]="catalog.imagenPath" />

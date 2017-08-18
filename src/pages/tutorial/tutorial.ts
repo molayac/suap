@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MenuController, NavController, LoadingController, AlertController, ToastController } from 'ionic-angular';
 
-import { WelcomePage } from '../welcome/welcome';
+import { OfflineService } from '../../providers/offline';
 import { StorePage } from '../store/store';
 
 import { TranslateService } from '@ngx-translate/core';
@@ -31,7 +31,7 @@ export class TutorialPage {
   tap:number = 0;
 
   constructor(public navCtrl: NavController, public menu: MenuController, translate: TranslateService, private mgService: MgGlobalProvider,
-    public loadingCtrl: LoadingController, public alertCtrl: AlertController, public toastCtrl:ToastController,
+    public loadingCtrl: LoadingController, public alertCtrl: AlertController, public toastCtrl:ToastController, private offline:OfflineService,
     public mg2Service: Magento2ServiceProvider, private settings: Settings) {
     this.loading = {
       spinner: "circles",
@@ -154,6 +154,7 @@ export class TutorialPage {
       if(!this.mg2Service.isReady()){
         this.organizeStores(this.statusLoad[0]);
         this.organizeCatalogStores(this.statusLoad);
+        this.offline.setValue("stores", this.stores);//TODO Change logic offline
         this.mg2Service.setHistory(this.stores);
         this.toastCtrl.create({
           message: "Completada la descarga!",

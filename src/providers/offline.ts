@@ -6,7 +6,7 @@ import { Storage } from '@ionic/storage';
  * A simple settings/config class for storing key/value pairs with persistence.
  */
 @Injectable()
-export class StorageService {
+export class OfflineService {
   private SETTINGS_KEY: string = '_storage';
 
   settings: any;
@@ -15,20 +15,19 @@ export class StorageService {
   _readyPromise: Promise<any>;
 
   constructor(public storage: Storage) {
-    this._defaults={URLBASE:"http://192.168.2.51/magento"};
+    this._defaults={OFFLINE: {status:false}};
+    this.load();
   }
 
-  load(defaults:any=null) {
+  load() {
     return this.storage.get(this.SETTINGS_KEY).then((value) => {
       if (value) {
         this.settings = value;
         return this._mergeDefaults(this._defaults);
       } else {
-        if(defaults!=null){
-          return this.setAll(defaults).then((val) => {
-            this.settings = val;
-          });
-        }
+        return this.setAll(this._defaults).then((val) => {
+          this.settings = val;
+        })
       }
     });
   }
@@ -71,6 +70,14 @@ export class StorageService {
 
   get allSettings() {
     return this.settings;
+  }
+
+  getAllSettings(){
+    return this.settings;
+  }
+
+  getValuePromise(key:string){
+    return this.storage.get(this.SETTINGS_KEY);
   }
 
 

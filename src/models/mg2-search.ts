@@ -3,14 +3,16 @@ export class Mg2Search{
   private andCount: any = 0;
   private orCount: any = 0;
   private filterCount: any = 0;
+  private sortOrder:any = 0;
 
+  public searchSortOrder:string = "searchCriteria[sortOrders][";
   public searchPageSize: string = "searchCriteria[page_size]=";
   public searchFilterGroups: string = "searchCriteria[filter_groups][";
   public searchFilters: string = "][filters][";
   public searchField: string = "][field]=";
   public searchValue: string = "][value]=";
   public searchConditionType: string = "][condition_type]=";
-  public wildcard: string = "%25";  
+  public wildcard: string = "%25";
 
   constructor(){
 
@@ -43,8 +45,13 @@ export class Mg2Search{
     }
   }
 
+  public addSortOrder(order){
+    this.resultFilter += this.searchSortOrder + this.sortOrder+ "][field]="+ order;
+    this.sortOrder++;
+  }
+
   public addPageSize(size) {
-    this.resultFilter += this.searchPageSize + size;
+    this.resultFilter += this.searchPageSize + size + "&";
   }
 
   public addFilter(filters: any) {
@@ -64,7 +71,7 @@ export class Mg2Search{
     else{
       this.filterAdd(aux + "&");
     }
-    console.log("Criteria", this.resultFilter);
+    /*console.log("Criteria", this.resultFilter);*/
   }
 
   private filterAdd(param) {

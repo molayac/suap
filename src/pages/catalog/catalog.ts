@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController, LoadingController, AlertController } from 'ionic-angular';
 import { MgGlobalProvider } from '../../providers/mg-global';
+
+import { OfflineService } from '../../providers/offline';
 import { MgImagen } from '../../models/mg-imagen';
 import { EffectsProvider } from '../../providers/providers';
 import { WelcomePage } from '../welcome/welcome';
+import { CatalogProductsPage } from '../catalog-products/catalog-products';
 /**
  * Generated class for the CatalogPage page.
  *
@@ -18,6 +21,7 @@ import { WelcomePage } from '../welcome/welcome';
 })
 export class CatalogPage {
   welcomePage:any=WelcomePage;
+  catalogProductsPage:any=CatalogProductsPage;
   store: any;
   _products: any = null;
   _catalogs: any = [];
@@ -29,6 +33,7 @@ export class CatalogPage {
     public toastCtrl: ToastController,
     public alertCtrl: AlertController,
     private mgService: MgGlobalProvider,
+    private offline:OfflineService,
     private effects: EffectsProvider) {
     let store = navParams.get("store");
     let isReady = navParams.get("loaded");

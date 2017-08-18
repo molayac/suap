@@ -4,15 +4,15 @@
   "type": "ionic-angular",
   "proxies": [
     {
-      "path": "/magento/rest/V1",
+      "path": "/rest/V1",
       "proxyUrl": "http://192.168.2.51/magento/rest/V1"
     },
     {
-      "path": "/magento/pub/media",
+      "path": "/pub/media",
       "proxyUrl": "http://192.168.2.51/magento/pub/media"
     },
     {
-      "path": "/magento/rest/all/V1",
+      "path": "/rest/all/V1",
       "proxyUrl": "http://192.168.2.51/magento/rest/all/V1"
     }
   ],

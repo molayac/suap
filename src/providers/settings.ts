@@ -17,6 +17,8 @@ export class Settings {
       this._defaults = {URLBASE:"http://192.168.2.51/magento"};
     else
       this._defaults = defaults;
+
+    this.load();
   }
 
   getDefaults(key?:string){

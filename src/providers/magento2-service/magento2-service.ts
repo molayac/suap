@@ -29,7 +29,6 @@ export class Magento2ServiceProvider {
 
   constructor(public http: Http, public api:Api, private settings: Settings) {
     this.magentoAPI = "http://192.168.2.51/magento/rest/V1/"; // Used for app builder
-    // this.magentoAPI = "/magentoAPI/";
     this.mg2Catalog = [];
     this.mg2Products = [];
     this.token = null;
@@ -133,17 +132,22 @@ export class Magento2ServiceProvider {
   getProductsByCategoryIdPaginated(id, pagId) {
     let filter = this.mg2Search.filter("category_id", id, null);
     this.mg2Search.addFilter(filter);
-    // filter = this.mg2Search.filter("entity_id", id, null);
+    filter = this.mg2Search.filter("entity_id", pagId, "from");
+    this.mg2Search.and();
+    this.mg2Search.addFilter(filter);
+
     this.mg2Search.addPageSize(10);
-    return this.http.get(this.magentoAPI + "products" + "?" + this.mg2Search.getResultFilter())
+    this.mg2Search.addSortOrder("id");
+    let filters = this.mg2Search.getResultFilter();
+    this.mg2Search.restartResultFilter();
+    this.api.setUrlAPI();
+    return this.api.get("products" + "?" + filters)
       .map(response => response.json());
-    // .subscribe(data => {
-    //   console.log( data );
-    // });
   }
 
   getProductMediaBySku(sku) {
-    return this.http.get(this.magentoAPI + "products_media/" + sku + "/media")
+    this.api.setUrlAPI();
+    return this.api.get("products/" + sku + "/media")
       .map(response => response.json());
   }
 
@@ -190,8 +194,8 @@ export class Magento2ServiceProvider {
     // return this._history;
   }
 
-  getPubMediaBaseURL(){
-    return this.api.getUrlMedia();
+  getPubMediaBaseURL(strict=false){
+    return this.api.getUrlMedia(strict);
   }
 
   settingsLoad(){

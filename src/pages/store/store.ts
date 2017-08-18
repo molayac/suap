@@ -10,6 +10,7 @@ import { CatalogPage } from '../catalog/catalog';
 import { EffectsProvider } from '../../providers/providers';
 import { Magento2ServiceProvider } from '../../providers/magento2-service/magento2-service';
 
+
 @IonicPage()
 @Component({
   selector: 'page-store',
@@ -55,7 +56,7 @@ export class StorePage {
       if (data != null && data.length > 0) {
         this.stores = data
       } else {
-        console.error("ERROR GRAVE!");
+
       }
     });
 
