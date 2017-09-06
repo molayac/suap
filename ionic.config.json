@@ -5,15 +5,15 @@
   "proxies": [
     {
       "path": "/rest/V1",
-      "proxyUrl": "http://192.168.2.51/magento/rest/V1"
+      "proxyUrl": "http://192.168.2.192/magento/rest/V1"
     },
     {
       "path": "/pub/media",
-      "proxyUrl": "http://192.168.2.51/magento/pub/media"
+      "proxyUrl": "http://192.168.2.192/magento/pub/media"
     },
     {
       "path": "/rest/all/V1",
-      "proxyUrl": "http://192.168.2.51/magento/rest/all/V1"
+      "proxyUrl": "http://192.168.2.192/magento/rest/all/V1"
     }
   ],
   "integrations": {
